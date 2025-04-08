@@ -1,9 +1,9 @@
 import { Address } from './value-object/address'
 
 export class Customer {
-  _id: string
-  _name: string
-  _address!: Address
+  private _id: string
+  private _name: string
+  private _address!: Address
   private _active: boolean = false
 
   constructor(id: string, name: string) {
