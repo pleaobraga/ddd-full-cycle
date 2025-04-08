@@ -1,4 +1,4 @@
-import { Address } from './address'
+import { Address } from './value-object/address'
 
 export class Customer {
   _id: string
@@ -31,6 +31,10 @@ export class Customer {
     return this._address
   }
 
+  get name(): string {
+    return this._name
+  }
+
   changeAddress(address: Address) {
     this._address = address
   }
@@ -50,7 +54,7 @@ export class Customer {
     this._active = false
   }
 
-  set address(address: Address) {
+  set Address(address: Address) {
     this._address = address
   }
 }
