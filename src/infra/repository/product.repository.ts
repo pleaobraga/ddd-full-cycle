@@ -1,5 +1,5 @@
 import { Product } from '../../domain/entity/product/product'
-import { ProductRepositoryInterface } from '../../domain/repository/product-repository.interface'
+import { ProductRepositoryInterface } from '../../domain/repository/product-repository.interface copy'
 import { ProductModel } from '../db/sequelize/model/product.model'
 
 export class ProductRepository implements ProductRepositoryInterface {
@@ -11,15 +11,30 @@ export class ProductRepository implements ProductRepositoryInterface {
     })
   }
 
+  async update(entity: Product): Promise<void> {
+    await ProductModel.update(
+      {
+        name: entity.name,
+        price: entity.price,
+      },
+      {
+        where: {
+          id: entity.id,
+        },
+      }
+    )
+  }
+
   async find(id: string): Promise<Product> {
-    throw new Error('Method not implemented')
+    const productModel = await ProductModel.findOne({ where: { id } })
+    return new Product(productModel.id, productModel.name, productModel.price)
   }
 
   async findAll(): Promise<Product[]> {
-    throw new Error('Method not implemented')
-  }
-
-  async update(entity: Product): Promise<void> {
-    throw new Error('Method not implemented')
+    const productModels = await ProductModel.findAll()
+    return productModels.map(
+      (productModel) =>
+        new Product(productModel.id, productModel.name, productModel.price)
+    )
   }
 }
