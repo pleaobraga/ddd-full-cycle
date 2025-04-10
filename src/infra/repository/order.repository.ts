@@ -1,9 +1,10 @@
 import OrderItemModel from '../db/sequelize/model/order-item.model'
 import { Order } from '../../domain/entity/checkout/order'
 import OrderModel from '../db/sequelize/model/order.model'
-import { OrderRepositoryInterface } from '../../domain/repository/order-repository.interface'
 
-export class OrderRepository implements OrderRepositoryInterface {
+export class OrderRepository {
+  //  implements OrderRepositoryInterface
+
   async create(entity: Order): Promise<void> {
     await OrderModel.create(
       {
@@ -24,15 +25,27 @@ export class OrderRepository implements OrderRepositoryInterface {
     )
   }
 
-  find(id: string): Promise<Order> {
-    throw new Error('Method not implemented')
-  }
+  // find(id: string): Promise<Order> {
+  //   let orderModel
 
-  findAll(): Promise<Order[]> {
-    throw new Error('Method not implemented')
-  }
+  //   try {
+  //     orderModel = await OrderModel.findOne({
+  //       where: {
+  //         id,
+  //       },
+  //       include: ['items'],
+  //       rejectOnEmpty: true,
+  //     })
+  //   } catch {
+  //     throw new Error('Customer not found')
+  //   }
+  // }
 
-  update(entity: Order): Promise<void> {
-    throw new Error('Method not implemented')
-  }
+  // findAll(): Promise<Order[]> {
+  //   throw new Error('Method not implemented')
+  // }
+
+  // update(entity: Order): Promise<void> {
+  //   throw new Error('Method not implemented')
+  // }
 }
