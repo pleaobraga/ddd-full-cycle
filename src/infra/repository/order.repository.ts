@@ -1,5 +1,5 @@
+import { Order } from '../../domain/checkout/entity/order'
 import OrderItemModel from '../db/sequelize/model/order-item.model'
-import { Order } from '../../domain/entity/checkout/order'
 import OrderModel from '../db/sequelize/model/order.model'
 
 export class OrderRepository {
