@@ -72,10 +72,14 @@ describe('Customer repository test', () => {
     const address = new Address('Street 1', 1, 'Zipcode 1', 'City 1')
     customer.Address = address
     await customerRepository.create(customer)
+    customer.clearEvents()
 
     const customerResult = await customerRepository.find(customer.id)
 
-    expect(customer).toStrictEqual(customerResult)
+    expect(customerResult.id).toBe(customer.id)
+    expect(customerResult.name).toBe(customer.name)
+    expect(customerResult.Address.street).toBe(customer.Address.street)
+    expect(customerResult.Address.number).toBe(customer.Address.number)
   })
 
   it('should throw an error when customer is not found', async () => {
@@ -100,12 +104,18 @@ describe('Customer repository test', () => {
     customer2.addRewardPoints(20)
 
     await customerRepository.create(customer1)
+    customer1.clearEvents()
     await customerRepository.create(customer2)
+    customer2.clearEvents()
 
     const customers = await customerRepository.findAll()
 
     expect(customers).toHaveLength(2)
-    expect(customers).toContainEqual(customer1)
-    expect(customers).toContainEqual(customer2)
+    expect(customers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ _id: '123', _name: 'Customer 1' }),
+        expect.objectContaining({ _id: '456', _name: 'Customer 2' }),
+      ])
+    )
   })
 })

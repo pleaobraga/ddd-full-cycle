@@ -1,6 +1,9 @@
-import { Address } from "../value-object/address"
+import { AgreggateRoot } from '../../@shared/domain/aggregate-root'
+import { CustomerCreatedEvent } from '../event/customer-created/customer-created.event'
+import { CustomerAddressChangedEvent } from '../event/custumer-address-changed/customer-address-changed.event'
+import { Address } from '../value-object/address'
 
-export class Customer {
+export class Customer extends AgreggateRoot {
   private _id: string
   private _name: string = ''
   private _address!: Address
@@ -8,9 +11,17 @@ export class Customer {
   private _rewardPoints: number = 0
 
   constructor(id: string, name: string) {
+    super()
     this._id = id
     this._name = name
     this.validate()
+  }
+
+  static create(id: string, name: string) {
+    const customer = new Customer(id, name)
+    const event = new CustomerCreatedEvent(customer)
+    customer.addEvent(event)
+    return customer
   }
 
   get id(): string {
@@ -45,6 +56,14 @@ export class Customer {
 
   changeAddress(address: Address) {
     this._address = address
+
+    const event = new CustomerAddressChangedEvent({
+      id: this._id,
+      name: this._name,
+      address: address.toString(),
+    })
+
+    this.addEvent(event)
   }
 
   isActive(): boolean {

@@ -172,7 +172,7 @@ describe('Order repository test', () => {
     expect(orders).toEqual(foundOrders)
   })
 
-  it.only('should update an order', async () => {
+  it('should update an order', async () => {
     const customerRepository = new CustomerRepository()
     const customer = new Customer('123', 'Customer 1')
     const address = new Address('Street 1', 1, 'Zipcode 1', 'City 1')
