@@ -6,23 +6,28 @@ import OrderModel from './order.model'
 
 export class OrderRepository implements OrderRepositoryInterface {
   async create(entity: Order): Promise<void> {
-    await OrderModel.create(
-      {
-        id: entity.id,
-        customer_id: entity.customerId,
-        total: entity.total(),
-        items: entity.items.map((item) => ({
-          id: item.id,
-          name: item.name,
-          price: item.price,
-          product_id: item.productId,
-          quantity: item.quantity,
-        })),
-      },
-      {
-        include: [{ model: OrderItemModel }],
-      }
-    )
+    try {
+      await OrderModel.create(
+        {
+          id: entity.id,
+          customer_id: entity.customerId,
+          total: entity.total(),
+          items: entity.items.map((item) => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            product_id: item.productId,
+            quantity: item.quantity,
+          })),
+        },
+        {
+          include: [{ model: OrderItemModel }],
+        }
+      )
+    } catch (e) {
+      console.log('error', e)
+      throw new Error('Error on create the order')
+    }
   }
 
   async find(id: string): Promise<Order> {
