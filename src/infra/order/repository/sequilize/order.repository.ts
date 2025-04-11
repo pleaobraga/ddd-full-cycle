@@ -1,10 +1,10 @@
 import { Order } from '../../../../domain/checkout/entity/order'
+import { OrderItem } from '../../../../domain/checkout/entity/order-item'
+import { OrderRepositoryInterface } from '../../../../domain/checkout/repository/order-repository.interface'
 import OrderItemModel from './order-item.model'
 import OrderModel from './order.model'
 
-export class OrderRepository {
-  //  implements OrderRepositoryInterface
-
+export class OrderRepository implements OrderRepositoryInterface {
   async create(entity: Order): Promise<void> {
     await OrderModel.create(
       {
@@ -25,27 +25,57 @@ export class OrderRepository {
     )
   }
 
-  // find(id: string): Promise<Order> {
-  //   let orderModel
+  async find(id: string): Promise<Order> {
+    let orderModel
 
-  //   try {
-  //     orderModel = await OrderModel.findOne({
-  //       where: {
-  //         id,
-  //       },
-  //       include: ['items'],
-  //       rejectOnEmpty: true,
-  //     })
-  //   } catch {
-  //     throw new Error('Customer not found')
-  //   }
-  // }
+    try {
+      orderModel = await OrderModel.findOne({
+        where: {
+          id,
+        },
+        include: ['items'],
+        rejectOnEmpty: true,
+      })
+    } catch {
+      throw new Error('Order not found')
+    }
 
-  // findAll(): Promise<Order[]> {
-  //   throw new Error('Method not implemented')
-  // }
+    const items = orderModel.items.map(
+      (item) =>
+        new OrderItem(
+          item.id,
+          item.name,
+          item.price,
+          item.product_id,
+          item.quantity
+        )
+    )
 
-  // update(entity: Order): Promise<void> {
-  //   throw new Error('Method not implemented')
-  // }
+    return new Order(orderModel.id, orderModel.customer_id, items)
+  }
+
+  async findAll(): Promise<Order[]> {
+    const orderModels = await OrderModel.findAll({
+      include: ['items'],
+    })
+
+    return orderModels.map((order) => {
+      const items = order.items.map(
+        (item) =>
+          new OrderItem(
+            item.id,
+            item.name,
+            item.price,
+            item.product_id,
+            item.quantity
+          )
+      )
+
+      return new Order(order.id, order.customer_id, items)
+    })
+  }
+
+  update(entity: Order): Promise<void> {
+    throw new Error('Method not implemented')
+  }
 }
