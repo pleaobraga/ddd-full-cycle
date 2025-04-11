@@ -80,7 +80,32 @@ export class OrderRepository implements OrderRepositoryInterface {
     })
   }
 
-  update(entity: Order): Promise<void> {
-    throw new Error('Method not implemented')
+  async update(entity: Order): Promise<void> {
+    await OrderModel.update(
+      {
+        customer_id: entity.customerId,
+        total: entity.total(),
+      },
+      {
+        where: {
+          id: entity.id,
+        },
+      }
+    )
+
+    await OrderItemModel.destroy({
+      where: { order_id: entity.id },
+    })
+
+    const items = entity.items.map((item) => ({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      product_id: item.productId,
+      order_id: entity.id,
+    }))
+
+    await OrderItemModel.bulkCreate(items)
   }
 }
