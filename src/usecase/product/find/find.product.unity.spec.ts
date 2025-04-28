@@ -36,7 +36,7 @@ describe('Product find unit tests', () => {
     const productRepository = MockRepository()
     const usecase = new FindProductUseCase(productRepository)
 
-    productRepository.find.mockRejectedValue(new Error('Product not found'))
+    productRepository.find.mockReturnValue(Promise.resolve(null))
 
     const input = {
       id: '2',

@@ -25,7 +25,7 @@ export class ProductRepository implements ProductRepositoryInterface {
     )
   }
 
-  async find(id: string): Promise<Product> {
+  async find(id: string): Promise<Product | null> {
     let productModel
 
     try {
@@ -36,7 +36,7 @@ export class ProductRepository implements ProductRepositoryInterface {
         rejectOnEmpty: true,
       })
     } catch {
-      throw new Error('Product not found')
+      return null
     }
 
     return new Product(productModel.id, productModel.name, productModel.price)
