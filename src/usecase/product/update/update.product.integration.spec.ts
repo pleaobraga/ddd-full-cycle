@@ -2,7 +2,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { ProductModel } from '../../../infra/product/repository/sequlize/product.model'
 import { ProductRepository } from '../../../infra/product/repository/sequlize/product.repository'
 import { Product } from '../../../domain/product/entity/product'
-import { CreateProductUseCase } from './create.product.usecase'
+import { UpdateProductUseCase } from './update.product.usecase'
 
 let sequelize: Sequelize
 
@@ -14,7 +14,7 @@ const input = {
 
 const product = new Product(input.id, input.name, input.price)
 
-describe('Integration Test Create product use case', () => {
+describe('Integration Test Update product use case', () => {
   beforeEach(async () => {
     sequelize = new Sequelize({
       dialect: 'sqlite',
@@ -33,11 +33,12 @@ describe('Integration Test Create product use case', () => {
 
   it('should create a product', async () => {
     const productRepository = new ProductRepository()
-    const usecase = new CreateProductUseCase(productRepository)
+    productRepository.create(product)
+    const usecase = new UpdateProductUseCase(productRepository)
 
     const input = {
       id: '1',
-      name: 'Product 1',
+      name: 'Product 1 updated',
       price: 100,
     }
 
@@ -45,19 +46,17 @@ describe('Integration Test Create product use case', () => {
 
     expect(output).toEqual({
       id: product.id,
-      name: product.name,
-      price: product.price,
+      name: input.name,
+      price: input.price,
     })
   })
 
-  it('should throw an error when product is already registered', async () => {
+  it('should throw an error when product is not registered', async () => {
     const productRepository = new ProductRepository()
-    const usecase = new CreateProductUseCase(productRepository)
-
-    await productRepository.create(product)
+    const usecase = new UpdateProductUseCase(productRepository)
 
     await expect(usecase.execute(input)).rejects.toThrow(
-      'Product already exists'
+      'Product does not exists'
     )
   })
 })

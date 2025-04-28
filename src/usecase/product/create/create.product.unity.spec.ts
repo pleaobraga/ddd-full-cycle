@@ -27,7 +27,11 @@ describe('Product create unit tests', () => {
 
     const output = await usecase.execute(input)
 
-    expect(output).toEqual(product)
+    expect(output).toEqual({
+      id: input.id,
+      name: input.name,
+      price: input.price,
+    })
   })
 
   it('should throw an error when product is already registered', async () => {
