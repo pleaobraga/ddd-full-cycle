@@ -72,7 +72,6 @@ describe('Customer repository test', () => {
     const address = new Address('Street 1', 1, 'Zipcode 1', 'City 1')
     customer.Address = address
     await customerRepository.create(customer)
-    customer.clearEvents()
 
     const customerResult = await customerRepository.find(customer.id)
 
@@ -104,9 +103,7 @@ describe('Customer repository test', () => {
     customer2.addRewardPoints(20)
 
     await customerRepository.create(customer1)
-    customer1.clearEvents()
     await customerRepository.create(customer2)
-    customer2.clearEvents()
 
     const customers = await customerRepository.findAll()
 
