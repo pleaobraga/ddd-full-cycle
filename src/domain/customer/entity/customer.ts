@@ -1,6 +1,6 @@
 import { Address } from '../value-object/address'
 import { Entity } from '../../@shared/entity/entity.abstact'
-import { NotificationError } from '../../@shared/notification/notofication.error'
+import { NotificationError } from '../../@shared/notification/notification.error'
 
 export class Customer extends Entity {
   private _name: string = ''
