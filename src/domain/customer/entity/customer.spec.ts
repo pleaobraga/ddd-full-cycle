@@ -1,7 +1,3 @@
-import { EventDispatcher } from '../../@shared/event/event-dispatcher'
-import { SendMessageWhenCustomerIsCreated1Handler } from '../event/customer-created/handler/send-message-when-customer-is-created-1'
-import { SendMessageWhenCustomerIsCreated2Handler } from '../event/customer-created/handler/send-message-when-customer-is-created-2'
-import { SendMesageWhenAddressHasChanged } from '../event/custumer-address-changed/handler/send-mesage-when-address-has-changed'
 import { Address } from '../value-object/address'
 import { Customer } from './customer'
 
@@ -9,13 +5,13 @@ describe('Customer unit tests', () => {
   it('should throw error when id is empty', () => {
     expect(() => {
       new Customer('', 'John')
-    }).toThrow('Id is required')
+    }).toThrow('customer: Id is required')
   })
 
   it('should throw error when name is empty', () => {
     expect(() => {
       new Customer('123', '')
-    }).toThrow('Name is required')
+    }).toThrow('customer: Name is required')
   })
 
   it('should change name', () => {
@@ -63,27 +59,5 @@ describe('Customer unit tests', () => {
 
     customer.addRewardPoints(10)
     expect(customer.rewardPoints).toBe(20)
-  })
-
-  it('should trigger events when customer is created and address is changed', () => {
-    const eventDispatcher = new EventDispatcher()
-
-    const handler1 = new SendMessageWhenCustomerIsCreated1Handler()
-    const handler2 = new SendMessageWhenCustomerIsCreated2Handler()
-    const addressHandler = new SendMesageWhenAddressHasChanged()
-
-    eventDispatcher.register('CustomerCreatedEvent', handler1)
-    eventDispatcher.register('CustomerCreatedEvent', handler2)
-    eventDispatcher.register('CustomerAddressChangedEvent', addressHandler)
-
-    const customer = Customer.create('123', 'John Doe')
-    const address = new Address('Street', 1, '00000', 'City')
-    customer.changeAddress(address)
-
-    for (const event of customer.events) {
-      eventDispatcher.notify(event)
-    }
-
-    customer.clearEvents()
   })
 })

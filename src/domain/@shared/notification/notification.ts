@@ -1,12 +1,12 @@
-export type NotificationError = {
+export type NotificationErrorProps = {
   message: string
   context: string
 }
 
 export class Notification {
-  private errors: NotificationError[] = []
+  private errors: NotificationErrorProps[] = []
 
-  addError(error: NotificationError): void {
+  addError(error: NotificationErrorProps): void {
     this.errors.push(error)
   }
 
@@ -25,5 +25,9 @@ export class Notification {
 
   hasErrors(): boolean {
     return this.errors.length > 0
+  }
+
+  get errorsList(): NotificationErrorProps[] {
+    return this.errors
   }
 }

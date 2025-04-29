@@ -1,10 +1,8 @@
-import { AgreggateRoot } from '../../@shared/domain/aggregate-root'
-import { CustomerCreatedEvent } from '../event/customer-created/customer-created.event'
-import { CustomerAddressChangedEvent } from '../event/custumer-address-changed/customer-address-changed.event'
 import { Address } from '../value-object/address'
+import { Entity } from '../../@shared/entity/entity.abstact'
+import { NotificationError } from '../../@shared/notification/notofication.error'
 
-export class Customer extends AgreggateRoot {
-  private _id: string
+export class Customer extends Entity {
   private _name: string = ''
   private _address!: Address
   private _active: boolean = false
@@ -15,17 +13,15 @@ export class Customer extends AgreggateRoot {
     this._id = id
     this._name = name
     this.validate()
+
+    if (this.notification.hasErrors()) {
+      throw new NotificationError(this.notification.errorsList)
+    }
   }
 
   static create(id: string, name: string) {
     const customer = new Customer(id, name)
-    const event = new CustomerCreatedEvent(customer)
-    customer.addEvent(event)
     return customer
-  }
-
-  get id(): string {
-    return this._id
   }
 
   get name(): string {
@@ -37,11 +33,17 @@ export class Customer extends AgreggateRoot {
   }
 
   validate() {
-    if (this._id.length === 0) {
-      throw new Error('Id is required')
+    if (this.id.length === 0) {
+      this.notification.addError({
+        message: 'Id is required',
+        context: 'customer',
+      })
     }
     if (this._name.length === 0) {
-      throw new Error('Name is required')
+      this.notification.addError({
+        message: 'Name is required',
+        context: 'customer',
+      })
     }
   }
 
@@ -56,14 +58,6 @@ export class Customer extends AgreggateRoot {
 
   changeAddress(address: Address) {
     this._address = address
-
-    const event = new CustomerAddressChangedEvent({
-      id: this._id,
-      name: this._name,
-      address: address.toString(),
-    })
-
-    this.addEvent(event)
   }
 
   isActive(): boolean {
