@@ -1,6 +1,7 @@
 import { Address } from '../value-object/address'
 import { Entity } from '../../@shared/entity/entity.abstact'
 import { NotificationError } from '../../@shared/notification/notification.error'
+import { CustomerValidatorFactory } from '../factory/customer.validator.factory'
 
 export class Customer extends Entity {
   private _name: string = ''
@@ -13,10 +14,6 @@ export class Customer extends Entity {
     this._id = id
     this._name = name
     this.validate()
-
-    if (this.notification.hasErrors()) {
-      throw new NotificationError(this.notification.errorsList)
-    }
   }
 
   static create(id: string, name: string) {
@@ -33,17 +30,10 @@ export class Customer extends Entity {
   }
 
   validate() {
-    if (this.id.length === 0) {
-      this.notification.addError({
-        message: 'Id is required',
-        context: 'customer',
-      })
-    }
-    if (this._name.length === 0) {
-      this.notification.addError({
-        message: 'Name is required',
-        context: 'customer',
-      })
+    CustomerValidatorFactory.create().validate(this)
+
+    if (this.notification.hasErrors()) {
+      throw new NotificationError(this.notification.errorsList)
     }
   }
 
